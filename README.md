@@ -12,7 +12,7 @@ docker build -t flaskr-demo .
 docker run -p 5000:5000 flaskr-demo
 ```
 
-## Run with Docker Compose
+<!-- ## Run with Docker Compose
 
 First run:
 ```bash
@@ -22,4 +22,4 @@ docker-compose up --build
 Subsequent runs:
 ```bash
 docker-compose up
-```
+``` -->
