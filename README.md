@@ -16,8 +16,8 @@ docker run -p 5000:5000 flaskr-demo
 
 First run:
 ```bash
-docker-compose run --rm flaskr sh -c "flask --app flaskr init-db"
-docker-compose up --build
+docker-compose run --rm web flask --app flaskr init-db
+docker-compose up 
 ```
 Subsequent runs:
 ```bash

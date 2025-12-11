@@ -1,16 +1,19 @@
 version: "3.9"
 
 services:
-  flaskr:
+  web:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "5000:5000"
+    environment:
+      - FLASK_APP=flaskr
+      - FLASK_ENV=production
     volumes:
+      - .:/app
       - flaskr-instance:/app/instance
-    command:
-      flask --app flaskr run --host=0.0.0.0 --port=5000
+    command: flask run --host=0.0.0.0 --port=5000
 
 volumes:
   flaskr-instance:
