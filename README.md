@@ -12,7 +12,7 @@ docker build -t flaskr-demo .
 docker run -p 5000:5000 flaskr-demo
 ```
 
-<!-- ## Run with Docker Compose
+## Run with Docker Compose
 
 First run:
 ```bash
@@ -22,4 +22,10 @@ docker-compose up --build
 Subsequent runs:
 ```bash
 docker-compose up
-``` -->
+```
+
+## Jenkins Setup
+
+```bash
+docker run -it --rm -p 8080:8080 -p 50000:50000 -v .\jenkins_home:/var/jenkins_home jenkins/jenkins:lts
+```
