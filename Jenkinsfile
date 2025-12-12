@@ -21,7 +21,7 @@ pipeline {
         
         stage('Init DB') {
             steps {
-                sh 'docker compose run --rm falskr flask --app flaskr init-db'
+                sh 'docker compose run --rm flaskr flask --app flaskr init-db'
             }
         }
         
