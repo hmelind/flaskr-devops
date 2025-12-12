@@ -25,23 +25,8 @@ pipeline {
             }
         }
         
-        // // stage('Build images') {
-        // //     steps {
-        // //         sh 'docker compose -f docker-compose.yml -p flaskrpipeline build --no-cache'
-        // //     }
-        // // }
-        
-        // stage('Init DB') {
-        //     steps {
-        //         // sh 'docker compose -f docker-compose.yml -p flaskrpipeline down --remove-orphans'
-        //         sh 'docker compose -f docker-compose.yml -p flaskrpipeline run --rm flaskr flask --app flaskr init-db'
-        //         // sh 'docker compose -f docker-compose.yml -p flaskrpipeline run --rm flaskr flask --app flaskr:create_app init-db'
-        //     }
-        // }
-        
         stage('Run tests') {
             steps {
-                sh 'docker compose -f docker-compose.yml -p flaskrpipeline down --remove-orphans'
                 sh 'docker compose -f docker-compose.yml -p flaskrpipeline run --rm flaskr pytest'
             }
         }
