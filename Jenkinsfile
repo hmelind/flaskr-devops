@@ -4,6 +4,7 @@ pipeline {
     environment {
         GITHUB_REPO = 'https://github.com/hmelind/flaskr-devops.git'
         BRANCH = 'main'
+        COMPOSE = "docker-compose"
     }
     
     stages {
@@ -13,56 +14,35 @@ pipeline {
             }
         }
         
-        stage('Install Dependencies') {
+        stage('Build images') {
             steps {
-                sh 'python3 -m venv .venv'
-                sh '. .venv/bin/activate'
-                sh 'pip install --upgrade pip'
-                sh 'pip install --no-cache-dir -e .'
-                sh 'pip install pytest coverage'
+                sh '${env.COMPOSE} build'
             }
         }
         
-        stage('Lint') {
+        stage('Init DB') {
             steps {
-                sh 'pip install flake8'
-                sh 'flake8 .'
+                sh '${env.COMPOSE} run --rm web flask --app flaskr init-db'
             }
         }
         
-        stage('Tests') {
+        stage('Run tests') {
             steps {
-                sh 'pip install \'.[test]\''
-                sh 'pytest'
+                sh '${env.COMPOSE} run --rm flaskr pytest'
             }
         }
-        
-        stage('Build') {
-            steps {
-                echo 'Buiding the application...'
-            }
-        }
-        
-        stage('Archive Artifacts') {
-            steps {
-                archiveArtifacts artifacts: 'dist/**/*', fingerprint: true
-            }
-        }
-        
+
         stage('Deploy') {
             steps {
-                echo 'Deploying the application...'
-            }
-        }
-        
-        stage('Cleanup') {
-            steps {
-                deleteDir()
+                sh '${env.COMPOSE} up -d'
             }
         }
     }
     
     post {
+        always {
+            sh 'docker-compose down'
+        }
         success {
             echo 'SUCCESS'
         }
