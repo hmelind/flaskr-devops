@@ -8,13 +8,14 @@ services:
     ports:
       - "5000:5000"
     environment:
-      FLASK_APP: flaskr
+      FLASK_APP: flaskr:create_app
       FLASK_ENV: development
       DATABASE_URL: postgresql://postgres:example@db:5432/flaskr
+      PYTHONPATH: /app
     depends_on:
       - db
-    volumes:
-      - .:/app
+    # volumes:
+    #   - .:/app
 
   db:
     image: postgres:15

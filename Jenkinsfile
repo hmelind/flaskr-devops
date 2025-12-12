@@ -12,35 +12,50 @@ pipeline {
                 git branch: env.BRANCH, url: env.GITHUB_REPO
             }
         }
-        
+
         stage('Build images') {
             steps {
-                sh 'docker compose build'
+                sh 'docker compose -f docker-compose.yml -p flaskrpipeline build --no-cache'
             }
         }
         
         stage('Init DB') {
             steps {
-                sh 'docker compose run --rm flaskr flask --app flaskr init-db'
+                sh 'docker compose -f docker-compose.yml -p flaskrpipeline run --rm flaskr flask --app flaskr:create_app init-db'
             }
         }
         
+        // // stage('Build images') {
+        // //     steps {
+        // //         sh 'docker compose -f docker-compose.yml -p flaskrpipeline build --no-cache'
+        // //     }
+        // // }
+        
+        // stage('Init DB') {
+        //     steps {
+        //         // sh 'docker compose -f docker-compose.yml -p flaskrpipeline down --remove-orphans'
+        //         sh 'docker compose -f docker-compose.yml -p flaskrpipeline run --rm flaskr flask --app flaskr init-db'
+        //         // sh 'docker compose -f docker-compose.yml -p flaskrpipeline run --rm flaskr flask --app flaskr:create_app init-db'
+        //     }
+        // }
+        
         stage('Run tests') {
             steps {
-                sh 'docker compose run --rm flaskr pytest'
+                sh 'docker compose -f docker-compose.yml -p flaskrpipeline down --remove-orphans'
+                sh 'docker compose -f docker-compose.yml -p flaskrpipeline run --rm flaskr pytest'
             }
         }
 
         stage('Deploy') {
             steps {
-                sh 'docker compose up -d'
+                sh 'docker compose -f docker-compose.yml -p flaskrpipeline up -d'
             }
         }
     }
     
     post {
         always {
-            sh 'docker compose down'
+            sh 'docker compose -f docker-compose.yml -p flaskrpipeline down --remove-orphans'
         }
         success {
             echo 'SUCCESS'
