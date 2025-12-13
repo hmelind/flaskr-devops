@@ -13,3 +13,7 @@ build/
 *.swp
 *~
 jenkins_home/
+Jenkinsfile
+README.md
+docker-compose.yml
+Dockerfile

@@ -13,7 +13,7 @@ services:
       DATABASE_URL: postgresql://postgres:example@db:5432/flaskr
       PYTHONPATH: /app
     depends_on:
-      - db
+      - dbk
     # volumes:
     #   - .:/app
 
