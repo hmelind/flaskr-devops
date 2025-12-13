@@ -1,6 +1,20 @@
 import os
+from time import time
 
-from flask import Flask
+from flask import Flask, g, request, Response
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+
+# Prometheus metrics
+REQUEST_COUNT = Counter(
+    "flaskr_http_requests_total",
+    "Total HTTP requests",
+    ["method", "endpoint", "http_status"],
+)
+REQUEST_LATENCY = Histogram(
+    "flaskr_request_latency_seconds",
+    "Request latency in seconds",
+    ["method", "endpoint"],
+)
 
 
 def create_app(test_config=None):
@@ -29,6 +43,26 @@ def create_app(test_config=None):
     @app.route("/hello")
     def hello():
         return "Hello, World!"
+
+    @app.before_request
+    def _start_timer():
+        g._start_time = time()
+
+    @app.after_request
+    def _record_metrics(response):
+        try:
+            request_latency = time() - g._start_time
+        except Exception:
+            request_latency = 0
+
+        endpoint = request.endpoint or "unknown"
+        REQUEST_LATENCY.labels(request.method, endpoint).observe(request_latency)
+        REQUEST_COUNT.labels(request.method, endpoint, str(response.status_code)).inc()
+        return response
+
+    @app.route("/metrics")
+    def metrics():
+        return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
 
     # register the database commands
     from . import db
